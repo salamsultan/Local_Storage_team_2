@@ -1,10 +1,11 @@
-package com.coolbanter.local_storage_team_2
+ package com.coolbanter.local_storage_team_2
 
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
+import android.widget.Toast
 import com.coolbanter.local_storage_team_2.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
@@ -26,36 +27,33 @@ class LoginActivity : AppCompatActivity() {
         password = binding.passwordEdit
 
         binding.loginButton.setOnClickListener {
-            savedata()
 
-            //This will change the current screen to another screen
-            val intent = Intent(this, LogutActivity::class.java)
-            LogutActivity(intent)
+            val email:String = binding.testFieldEditTest.toString()
+            val password:String = binding.passwordEdit.toString()
+
+            if (email.trim().length == 0 || password.trim().length == 0) {
+                Toast.makeText(this, "email or password is empty", Toast.LENGTH_SHORT).show()
+            }
+
+            else if (email.equals("abc") and password.equals("123")) {
+
+                val mypref = getSharedPreferences("mypref", MODE_PRIVATE).edit()
+                mypref.putString(email, "mypref")
+                mypref.apply()
+
+                val intent = Intent(this, LogutActivity::class.java)
+                intent.putExtra("mypref", email)
+                LogutActivity(intent)
+            }
+            else{
+                Toast.makeText(this, "Username or password is incorrect", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
-        //To save data with shared preference
-    private fun savedata() {
-            //If field is empty will show (Input email address)
-        if (binding.testFieldEditTest.text!!.isEmpty()) {
-            binding.testFieldEditTest.error = "Input your email address!!"
-            return
-        }
-            //If field is empty will show (Password is empty)
-        if (binding.passwordEdit.text!!.isEmpty()) {
-            binding.passwordEdit.error = "Password is empty!"
-            return
-        }
 
-        val mypref = getSharedPreferences("mypref", Context.MODE_PRIVATE)
-
-        val editor = mypref.edit()
-
-        editor.putString("name", binding.testFieldEditTest.text.toString())
-        editor.putString("password", binding.passwordEdit.text.toString())
-
-    }
-            //To retrieve data with shared preference
-    private fun retrievedata() {
+    //To retrieve data with shared preference
+            private fun retrievedata() {
         val mypref = getSharedPreferences("mypref", Context.MODE_PRIVATE)
 
         val name = mypref.getString("name", "")
@@ -65,3 +63,4 @@ class LoginActivity : AppCompatActivity() {
         binding.passwordEdit.setText(password)
     }
 }
+
